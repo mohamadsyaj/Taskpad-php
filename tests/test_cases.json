@@ -1,0 +1,157 @@
+[
+  {
+    "id": "TC01",
+    "desc": "Create task happy path",
+    "method": "POST",
+    "endpoint": "public/create.php",
+    "post": { "title": "Buy milk", "description": "", "priority": "Low", "due": "" },
+    "pre_state": { "tasks": [] },
+    "expect": {
+      "status": 302,
+      "redirect_contains": "index.php",
+      "tasks_count": 1,
+      "title_exists": "Buy milk"
+    }
+  },
+  {
+    "id": "TC02",
+    "desc": "Create task missing title",
+    "method": "POST",
+    "endpoint": "public/create.php",
+    "post": { "title": "", "description": "x", "priority": "High", "due": "" },
+    "pre_state": { "tasks": [] },
+    "expect": {
+      "status": 200,
+      "html_contains": ["Title is required"]
+    }
+  },
+  {
+    "id": "TC03",
+    "desc": "Create task with invalid date",
+    "method": "POST",
+    "endpoint": "public/create.php",
+    "post": { "title": "Has bad date", "description": "", "priority": "Medium", "due": "2025-99-99" },
+    "pre_state": { "tasks": [] },
+    "expect": {
+      "status": 200,
+      "html_contains": ["Invalid date"]
+    }
+  },
+  {
+    "id": "TC04",
+    "desc": "Filter by text only",
+    "method": "GET",
+    "endpoint": "public/index.php",
+    "get": { "q": "milk" },
+    "pre_state": {
+      "tasks": [
+        { "id": "t1", "title": "Buy milk", "description": "", "priority": "Low", "due": null, "completed": false },
+        { "id": "t2", "title": "Walk dog", "description": "", "priority": "Medium", "due": null, "completed": false }
+      ]
+    },
+    "expect": {
+      "status": 200,
+      "html_contains": ["Buy milk"],
+      "tasks_count": 2
+    }
+  },
+  {
+    "id": "TC05",
+    "desc": "Filter by priority only",
+    "method": "GET",
+    "endpoint": "public/index.php",
+    "get": { "priority": "High" },
+    "pre_state": {
+      "tasks": [
+        { "id": "t1", "title": "Low task", "description": "", "priority": "Low", "due": null, "completed": false },
+        { "id": "t2", "title": "High task", "description": "", "priority": "High", "due": null, "completed": false }
+      ]
+    },
+    "expect": {
+      "status": 200,
+      "html_contains": ["High task"]
+    }
+  },
+  {
+    "id": "TC06",
+    "desc": "Filter text + priority with no matches",
+    "method": "GET",
+    "endpoint": "public/index.php",
+    "get": { "q": "xyz", "priority": "Low" },
+    "pre_state": {
+      "tasks": [
+        { "id": "t1", "title": "Some task", "description": "", "priority": "Low", "due": null, "completed": false }
+      ]
+    },
+    "expect": {
+      "status": 200,
+      "html_contains": ["No tasks matched your filters"]
+    }
+  },
+  {
+    "id": "TC07",
+    "desc": "Complete existing task",
+    "method": "POST",
+    "endpoint": "public/actions.php",
+    "post": { "action": "complete", "id": "t1" },
+    "pre_state": {
+      "tasks": [
+        { "id": "t1", "title": "Complete me", "description": "", "priority": "Medium", "due": null, "completed": false }
+      ]
+    },
+    "expect": {
+      "status": 302,
+      "redirect_contains": "index.php",
+      "any_completed": true
+    }
+  },
+  {
+    "id": "TC08",
+    "desc": "Delete existing task",
+    "method": "POST",
+    "endpoint": "public/actions.php",
+    "post": { "action": "delete", "id": "t1" },
+    "pre_state": {
+      "tasks": [
+        { "id": "t1", "title": "To be deleted", "description": "", "priority": "Low", "due": null, "completed": false },
+        { "id": "t2", "title": "Keep me", "description": "", "priority": "Low", "due": null, "completed": false }
+      ]
+    },
+    "expect": {
+      "status": 302,
+      "redirect_contains": "index.php",
+      "tasks_count": 1,
+      "title_exists": "Keep me",
+      "deleted_id": "t1"
+    }
+  },
+  {
+    "id": "TC09",
+    "desc": "Delete non-existing task id",
+    "method": "POST",
+    "endpoint": "public/actions.php",
+    "post": { "action": "delete", "id": "zzz" },
+    "pre_state": {
+      "tasks": [
+        { "id": "t1", "title": "Still here", "description": "", "priority": "Low", "due": null, "completed": false }
+      ]
+    },
+    "expect": {
+      "status": 302,
+      "redirect_contains": "index.php",
+      "tasks_count": 1
+    }
+  },
+  {
+    "id": "TC10",
+    "desc": "Redirect after valid create (PRG pattern)",
+    "method": "POST",
+    "endpoint": "public/create.php",
+    "post": { "title": "PRG test", "description": "", "priority": "Medium", "due": "" },
+    "pre_state": { "tasks": [] },
+    "expect": {
+      "status": 302,
+      "redirect_contains": "index.php"
+    }
+  }
+]

@@ -1,0 +1,21 @@
+/* TEST CSS – if this loads, you will definitely see it */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #111111;
+    color: #00ff00;
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+}
+
+h1 {
+    color: #ff6b6b;
+    font-size: 32px;
+}
+
+a {
+    color: #00bfff;
+}
