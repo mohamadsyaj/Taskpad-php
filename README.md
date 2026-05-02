@@ -1,4 +1,4 @@
-TaskPad PHP is a minimal task tracker built for CIS 435 Project 3.  
+TaskPad PHP is a minimal task tracke.  
 Users can create tasks, filter them, mark them complete, and delete them.  
 Tasks are stored in a JSON file on the server (no database).
 ---
